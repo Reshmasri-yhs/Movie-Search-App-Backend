@@ -1,19 +1,25 @@
 import mongoose from "mongoose";
 
+const connectDB = async () => {
+    try {
+        await mongoose.connect(
+            process.env.MONGO_URI,
+            {
+                serverApi: {
+                    version: "1",
+                    strict: true,
+                    deprecationErrors: true
+                }
+            }
+        );
 
-function connectDB(){
+        await mongoose.connection.db.admin().command({ ping: 1 });
 
-    mongoose.connect(process.env.MONGO_URI)
-
-    .then(function(){
         console.log("MongoDB Connected Successfully");
+    } catch (error) {
+        console.log("MongoDB Connection Failed:", error.message);
+        process.exit(1);
+    }
+};
 
-    })
-    .catch(function(error){
-        console.log("MongoDB Connection Failed");
-        console.log(error.message);
-
-    });
-
-}
 export default connectDB;
